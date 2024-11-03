@@ -1,0 +1,101 @@
+.shopping-list-header {
+    display: flex;
+    align-items: center; 
+}
+
+.list-name {
+    margin: 0;
+    margin-right: 10px; 
+}
+
+.list-name-input {
+    padding: 6px; 
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px; 
+    font-size: 16px; 
+    flex-grow: 1; 
+    min-width: 120px;
+}
+
+.edit-save-button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 4px 12px; 
+    cursor: pointer;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 10px; 
+    transition: background-color 0.3s;
+    height: 32px; 
+    line-height: 1; 
+    width: 60px;
+}
+
+.edit-save-button:hover {
+    background-color: #45a049;
+}
+
+.leave-list-button {
+    margin-bottom: 10px;
+    color: blue;
+    background-color: transparent; 
+    border: none; 
+    cursor: pointer; 
+}
+
+ul {
+    padding: 0;
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    margin: 0; 
+}
+
+.filter-add-container {
+    display: flex;
+    align-items: center; 
+    margin-top: 15px; 
+    margin-bottom: 10px; 
+    width: 100%; 
+}
+
+.filter-button {
+    background-color: #AEEEEE;
+    color: #333; 
+    border: none;
+    padding: 6px 12px; 
+    margin-right: 8px;
+    border-radius: 20px; 
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.3s; 
+    height: 32px; 
+    line-height: 1; 
+}
+
+.filter-button:hover {
+    background-color: #90E0E0; 
+}
+
+.add-item-button {
+    background-color: #4CAF50; 
+    color: white;
+    border: none;
+    padding: 0; 
+    cursor: pointer;
+    border-radius: 50%; 
+    width: 32px; 
+    height: 32px; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px; 
+    line-height: -40; 
+    transition: background-color 0.3s;
+}
+
+.add-item-button:hover {
+    background-color: #45a049; 
+}

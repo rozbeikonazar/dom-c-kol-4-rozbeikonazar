@@ -1,0 +1,137 @@
+footer {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+}
+
+.modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    box-shadow: 0 20px 20px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px; 
+    position: absolute; 
+    top: 20px;
+    left: 20px;
+}
+
+.invite-user-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-radius: 20px; 
+    font-weight: bold;
+    width: 150px; 
+}
+
+.invite-user-btn:hover {
+    background-color: #45a049; 
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown button {
+    background-color: #e0f7fa; 
+    color: #333;
+    border: 1px solid #ccc; 
+    padding: 8px 12px; 
+    cursor: pointer; 
+    border-radius: 20px; 
+    font-weight: bold;
+    transition: background-color 0.3s; 
+    font-size: 14px; 
+    width: 135px;
+}
+
+.dropdown button:hover {
+    background-color: #b2ebf2; 
+}
+
+.dropdown button::after {
+    content: '>'; 
+    margin-left: 8px; 
+    transition: transform 0.3s; 
+}
+
+/* Change arrow direction to v when dropdown is open */
+.dropdown.open button::after {
+    content: 'v'; 
+}
+
+.dropdown-content {
+    display: none; 
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    min-width: 200px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    padding: 5px;
+}
+
+.dropdown.open .dropdown-content {
+    display: block; 
+}
+
+.dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+    background-color: #f1f1f1; 
+}
+
+.kick-icon {
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.kick-icon:hover {
+    color: darkred;
+}
+
+.invite-user-input {
+    padding: 6px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    margin-top: 10px; 
+}
+
+.leave-list-button {
+    background-color: #fb0b07 !important; 
+    color: rgb(255, 255, 255) !important;
+    padding: 10px 16px; 
+    cursor: pointer;
+    border-radius: 20px; 
+    font-weight: bold;
+    width: 120px;
+    font-size: 15px; 
+    transition: transform 0.2s, background-color 0.3s;
+    text-align: center;
+}
