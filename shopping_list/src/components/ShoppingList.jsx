@@ -1,30 +1,70 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Product from './Product';
-import AddItemModal from './AddItemModal'; 
-import './ShoppingList.css'; 
+import AddItemModal from './AddItemModal';
+import './ShoppingList.css';
 
-function ShoppingList({ 
-  list, 
-  userId, 
-  onUpdateListName,  
-  onToggleItemResolved, 
-  onRemoveItem,
-  onAddItem 
+function ShoppingList({
+  shoppingLists,
+  userId,
+  onUpdateShoppingList,
+  users
 }) {
-  const [filter, setFilter] = useState('all'); 
-  const [isEditing, setIsEditing] = useState(false); 
-  const [newListName, setNewListName] = useState(list.name); 
+  const { id } = useParams(); 
+  const listId = parseInt(id, 10); 
+  const list = shoppingLists.find((l) => l.id === listId);
+
+  const [filter, setFilter] = useState('all');
+  const [isEditing, setIsEditing] = useState(false);
+  const [newListName, setNewListName] = useState(list.name);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isMember = list.members.includes(userId);
 
+  if (!list) {
+    return <div>Shopping List not found</div>;
+  }
+
   const handleEditListName = () => {
     if (isEditing) {
-      onUpdateListName(newListName); 
-      setIsEditing(false); 
+      const updatedList = { ...list, name: newListName };
+      onUpdateShoppingList(updatedList);
+      setIsEditing(false);
     } else {
-      setIsEditing(true); 
+      setIsEditing(true);
     }
+  };
+
+  const handleAddItem = (itemName) => {
+    const newItem = {
+      id: list.items.length + 1,
+      name: itemName,
+      resolved: false,
+    };
+    const updatedList = {
+      ...list,
+      items: [...list.items, newItem],
+    };
+    onUpdateShoppingList(updatedList);
+    setIsModalOpen(false);
+  };
+
+  const handleToggleItemResolved = (itemId) => {
+    const updatedList = {
+      ...list,
+      items: list.items.map((item) =>
+        item.id === itemId ? { ...item, resolved: !item.resolved } : item
+      ),
+    };
+    onUpdateShoppingList(updatedList);
+  };
+
+  const handleRemoveItem = (itemId) => {
+    const updatedList = {
+      ...list,
+      items: list.items.filter((item) => item.id !== itemId),
+    };
+    onUpdateShoppingList(updatedList);
   };
 
   const filteredItems = list.items.filter((item) => {
@@ -37,12 +77,12 @@ function ShoppingList({
     <div>
       <div className="shopping-list-header">
         {isEditing ? (
-          <input 
-            type="text" 
-            value={newListName} 
-            onChange={(e) => setNewListName(e.target.value)} 
-            placeholder={list.name} 
-            className="list-name-input" 
+          <input
+            type="text"
+            value={newListName}
+            onChange={(e) => setNewListName(e.target.value)}
+            placeholder={list.name}
+            className="list-name-input"
           />
         ) : (
           <h2 className="list-name">{list.name}</h2>
@@ -65,9 +105,9 @@ function ShoppingList({
       </div>
 
       {isModalOpen && (
-        <AddItemModal 
-          onAddItem={onAddItem} 
-          onClose={() => setIsModalOpen(false)} 
+        <AddItemModal
+          onAddItem={handleAddItem}
+          onClose={() => setIsModalOpen(false)}
         />
       )}
 
@@ -76,8 +116,8 @@ function ShoppingList({
           <Product
             key={item.id}
             item={item}
-            onToggleResolved={onToggleItemResolved} 
-            onRemove={onRemoveItem} 
+            onToggleResolved={() => handleToggleItemResolved(item.id)}
+            onRemove={() => handleRemoveItem(item.id)}
           />
         ))}
       </ul>

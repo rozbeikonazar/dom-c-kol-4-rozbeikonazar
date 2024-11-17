@@ -1,0 +1,213 @@
+.shopping-lists {
+    padding: 20px;
+    background-color: #f5f5f5;
+    min-height: 100vh;
+  }
+  
+  .shopping-lists h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  .add-list {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .add-list input {
+    padding: 10px;
+    font-size: 1rem;
+    width: 250px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .add-list button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .add-list button:hover {
+    background-color: #218838;
+  }
+  
+  /* Filter Dropdown */
+  .filter-container {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .filter-container select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    width: 150px;
+  }
+  
+  .list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  
+  .list-tile {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .list-tile:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .list-tile h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .list-tile p {
+    font-size: 0.9rem;
+    color: #555;
+    margin: 5px 0;
+  }
+  
+  .list-tile.active p {
+    color: green; 
+  }
+  
+  .list-tile.active .archive-button {
+    background-color: #6c757d; 
+  }
+  
+  .list-tile.active .archive-button:hover {
+    background-color: #5a6268; 
+  }
+  
+  .list-tile.active .active-text {
+    color: green;
+  }
+  
+  .list-tile.archived p {
+    color: #999;
+  }
+  
+  .list-tile.archived .archive-button {
+    background-color: #28a745;
+  }
+  
+  .list-tile.archived .archive-button:hover {
+    background-color: #218838; 
+  }
+  
+  .archive-button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+  }
+  
+  .archive-button:hover {
+    background-color: #5a6268;
+  }
+  
+  .list-tile button {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    margin-top: 10px;
+  }
+  
+  .list-tile button:hover {
+    background-color: #b21f2d;
+  }
+  
+  .confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .confirm-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .confirm-modal-content p {
+    margin-bottom: 20px;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .modal-buttons button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .modal-buttons button:first-child {
+    background-color: #6c757d;
+    color: white;
+  }
+  
+  .modal-buttons button:first-child:hover {
+    background-color: #5a6268;
+  }
+  
+  .modal-buttons button:last-child {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .modal-buttons button:last-child:hover {
+    background-color: #b21f2d;
+  }
+  

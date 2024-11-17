@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import ShoppingList from './components/ShoppingList';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ShoppingLists from './components/ShoppingLists'; 
+import ShoppingList from './components/ShoppingList'; 
 import './App.css';
-import Footer from './components/Footer';
-import Header from './components/Header';
 
 function App() {
-  const userId = 2; // to log as an owner put 1 here, to log as a member put number between 2-4
+  const userId = 2; 
   const users = {
     1: 'Alice',
     2: 'Bob',
@@ -13,108 +13,80 @@ function App() {
     4: 'Robert'
   };
 
-  const [shoppingList, setShoppingList] = useState({
-    id: 1,
-    name: 'Weekly Groceries',
-    ownerId: 1,
-    members: [1, 2, 3],
-    items: [
-      { id: 1, name: 'Milk', resolved: false },
-      { id: 2, name: 'Bread', resolved: false },
-    ],
-  });
+  const [shoppingLists, setShoppingLists] = useState([
+    {
+      id: 1,
+      name: 'Weekly Groceries',
+      ownerId: 1,
+      members: [1, 2, 3],
+      items: [
+        { id: 1, name: 'Milk', resolved: false },
+        { id: 2, name: 'Bread', resolved: false },
+      ],
+      archived: false,
+    },
+    {
+      id: 2,
+      name: 'Party Supplies',
+      ownerId: 2,
+      members: [2, 3],
+      items: [
+        { id: 1, name: 'Balloons', resolved: false },
+        { id: 2, name: 'Snacks', resolved: true },
+      ],
+      archived: true,
+    },
+  ]);
 
-  const updateListName = (newName) => {
-    if (shoppingList.ownerId === userId) {
-      setShoppingList((prevList) => ({
-        ...prevList,
-        name: newName,
-      }));
-    }
-  };
-
-  const kickMember = (memberId) => {
-    if (shoppingList.ownerId === userId) {
-      setShoppingList((prevList) => ({
-        ...prevList,
-        members: prevList.members.filter((id) => id !== memberId),
-      }));
-    }
-  };
-
-  const leaveList = () => {
-    setShoppingList((prevList) => ({
-      ...prevList,
-      members: prevList.members.filter((id) => id !== userId),
-    }));
-  };
-
-  const toggleItemResolved = (itemId) => {
-    setShoppingList((prevList) => ({
-      ...prevList,
-      items: prevList.items.map((item) =>
-        item.id === itemId ? { ...item, resolved: !item.resolved } : item
-      ),
-    }));
-  };
-
-  const addItem = (newItemName) => {
-    const newItem = {
-      id: shoppingList.items.length + 1, 
-      name: newItemName,
-      resolved: false,
+  const addList = (listName) => {
+    const newList = {
+      id: shoppingLists.length + 1,
+      name: listName,
+      ownerId: userId,
+      members: [userId],
+      items: [],
+      archived: false,
     };
-
-    setShoppingList((prevList) => ({
-      ...prevList,
-      items: [...prevList.items, newItem], 
-    }));
+    setShoppingLists([...shoppingLists, newList]);
   };
 
-  const removeItem = (itemId) => {
-    setShoppingList((prevList) => ({
-      ...prevList,
-      items: prevList.items.filter((item) => item.id !== itemId), 
-    }));
+  const deleteList = (listId) => {
+    setShoppingLists(shoppingLists.filter(list => list.id !== listId || list.ownerId !== userId));
   };
 
-  const addMember = (newMemberId) => {
-    if (shoppingList.ownerId === userId && !shoppingList.members.includes(newMemberId)) {
-      setShoppingList((prevList) => ({
-        ...prevList,
-        members: [...prevList.members, newMemberId], 
-      }));
-    }
+  const updateShoppingList = (updatedList) => {
+    setShoppingLists(shoppingLists.map(list => (list.id === updatedList.id ? updatedList : list)));
   };
-
-  const invitedUsers = shoppingList.members
-    .map(memberId => ({ id: memberId, name: users[memberId] }))
-    .filter(user => user.id !== shoppingList.ownerId);
 
   return (
-    <div className="App">
-      <Header
-        invitedUsers={invitedUsers}
-        onKickMember={kickMember}
-        onInviteUser={addMember}
-        ownerId={shoppingList.ownerId}
-        userId={userId}
-        users={users}
-        onLeaveList={leaveList}
-      />
-      <ShoppingList
-        list={shoppingList}
-        userId={userId}
-        onUpdateListName={updateListName}
-        onKickMember={kickMember}
-        onToggleItemResolved={toggleItemResolved}
-        onAddItem={addItem} 
-        onRemoveItem={removeItem} 
-        onAddMember={addMember} 
-        users={users}
-      />
-      <Footer ownerName={users[shoppingList.ownerId]}/> 
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ShoppingLists
+              userId={userId}
+              shoppingLists={shoppingLists}
+              onAddList={addList}
+              onDeleteList={deleteList}
+              onUpdateShoppingList={updateShoppingList}
+              users={users}
+            />
+          }
+        />
+        <Route
+          path="/list/:id"
+          element={
+            <ShoppingList
+              userId={userId}
+              shoppingLists={shoppingLists}
+              onUpdateShoppingList={updateShoppingList}
+              users={users}
+            />
+          }
+        />
+      </Routes>
+    </Router>
   );
 }
 
