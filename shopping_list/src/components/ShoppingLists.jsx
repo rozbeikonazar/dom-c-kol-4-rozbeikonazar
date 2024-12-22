@@ -64,40 +64,47 @@ const ShoppingLists = ({
       </div>
 
       <div className="list-grid">
-  {filteredLists.map((list) => (
-    <div
-      key={list.id}
-      className={`list-tile ${list.archived ? 'archived' : 'active'}`} 
-    >
-      <Link to={`/list/${list.id}`}>
-        <h3>{list.name}</h3>
-      </Link>
-      <p className={list.archived ? 'archived-text' : 'active-text'}>
-        {list.archived ? 'Archived' : 'Active'}
-      </p>
+        {filteredLists.map((list) => {
+          const resolvedCount = list.items.filter((item) => item.resolved).length;
+          const unresolvedCount = list.items.length - resolvedCount;
 
-      <button
-        className={`archive-button ${list.archived ? 'archived' : 'active'}`} 
-        onClick={() => handleArchiveToggle(list)}
-      >
-        {list.archived ? 'Unarchive' : 'Archive'}
-      </button>
+          return (
+            <div
+              key={list.id}
+              className={`list-tile ${list.archived ? 'archived' : 'active'}`}
+            >
+              <Link to={`/list/${list.id}`}>
+                <h3>{list.name}</h3>
+                <p>Total Items: {list.items.length}</p>
+                <p>Resolved: {resolvedCount}</p>
+                <p>Unresolved: {unresolvedCount}</p>
+              </Link>
+              <p className={list.archived ? 'archived-text' : 'active-text'}>
+                {list.archived ? 'Archived' : 'Active'}
+              </p>
 
-      {list.ownerId === userId && (
-        <button
-          className="delete-button"
-          onClick={() => {
-            setListToDelete(list);
-            setIsConfirmModalOpen(true);
-          }}
-        >
-          Delete
-        </button>
-      )}
-    </div>
-  ))}
-</div>
+              <button
+                className={`archive-button ${list.archived ? 'archived' : 'active'}`}
+                onClick={() => handleArchiveToggle(list)}
+              >
+                {list.archived ? 'Unarchive' : 'Archive'}
+              </button>
 
+              {list.ownerId === userId && (
+                <button
+                  className="delete-button"
+                  onClick={() => {
+                    setListToDelete(list);
+                    setIsConfirmModalOpen(true);
+                  }}
+                >
+                  Delete
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
 
       {isConfirmModalOpen && (
         <div className="confirm-modal">

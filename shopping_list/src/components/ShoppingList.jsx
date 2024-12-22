@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Pie } from 'react-chartjs-2';
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import Product from './Product';
 import AddItemModal from './AddItemModal';
 import './ShoppingList.css';
 
-function ShoppingList({
-  shoppingLists,
-  userId,
-  onUpdateShoppingList,
-  users
-}) {
-  const { id } = useParams(); 
-  const listId = parseInt(id, 10); 
+// Register Chart.js components
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+function ShoppingList({ shoppingLists, userId, onUpdateShoppingList, users }) {
+  const { id } = useParams();
+  const listId = parseInt(id, 10);
   const list = shoppingLists.find((l) => l.id === listId);
 
   const [filter, setFilter] = useState('all');
@@ -19,11 +19,24 @@ function ShoppingList({
   const [newListName, setNewListName] = useState(list.name);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const isMember = list.members.includes(userId);
-
   if (!list) {
     return <div>Shopping List not found</div>;
   }
+
+  const resolvedCount = list.items.filter((item) => item.resolved).length;
+  const unresolvedCount = list.items.length - resolvedCount;
+
+  const pieData = {
+    labels: ['Resolved', 'Unresolved'],
+    datasets: [
+      {
+        label: 'Item Status',
+        data: [resolvedCount, unresolvedCount],
+        backgroundColor: ['#4caf50', '#f44336'],
+        hoverBackgroundColor: ['#45a049', '#e53935'],
+      },
+    ],
+  };
 
   const handleEditListName = () => {
     if (isEditing) {
@@ -34,44 +47,6 @@ function ShoppingList({
       setIsEditing(true);
     }
   };
-
-  const handleAddItem = (itemName) => {
-    const newItem = {
-      id: list.items.length + 1,
-      name: itemName,
-      resolved: false,
-    };
-    const updatedList = {
-      ...list,
-      items: [...list.items, newItem],
-    };
-    onUpdateShoppingList(updatedList);
-    setIsModalOpen(false);
-  };
-
-  const handleToggleItemResolved = (itemId) => {
-    const updatedList = {
-      ...list,
-      items: list.items.map((item) =>
-        item.id === itemId ? { ...item, resolved: !item.resolved } : item
-      ),
-    };
-    onUpdateShoppingList(updatedList);
-  };
-
-  const handleRemoveItem = (itemId) => {
-    const updatedList = {
-      ...list,
-      items: list.items.filter((item) => item.id !== itemId),
-    };
-    onUpdateShoppingList(updatedList);
-  };
-
-  const filteredItems = list.items.filter((item) => {
-    if (filter === 'resolved') return item.resolved;
-    if (filter === 'unresolved') return !item.resolved;
-    return true; // 'all'
-  });
 
   return (
     <div>
@@ -94,30 +69,50 @@ function ShoppingList({
         )}
       </div>
 
+      <div className="chart-container" style={{ width: '300px', height: '300px', margin: '0 auto' }}>
+        <h3>Item Status</h3>
+        <Pie data={pieData} options={{ maintainAspectRatio: false }} />
+      </div>
+
       <div className="filter-add-container">
         <button className="filter-button" onClick={() => setFilter('all')}>Show All</button>
         <button className="filter-button" onClick={() => setFilter('unresolved')}>Show Unresolved</button>
         <button className="filter-button" onClick={() => setFilter('resolved')}>Show Resolved</button>
-
-        {isMember && (
-          <button className="add-item-button" onClick={() => setIsModalOpen(true)}>+</button>
-        )}
+        <button className="add-item-button" onClick={() => setIsModalOpen(true)}>+</button>
       </div>
 
       {isModalOpen && (
         <AddItemModal
-          onAddItem={handleAddItem}
+          onAddItem={(itemName) => {
+            const newItem = { id: list.items.length + 1, name: itemName, resolved: false };
+            const updatedList = { ...list, items: [...list.items, newItem] };
+            onUpdateShoppingList(updatedList);
+            setIsModalOpen(false);
+          }}
           onClose={() => setIsModalOpen(false)}
         />
       )}
 
       <ul>
-        {filteredItems.map((item) => (
+        {list.items.filter((item) => {
+          if (filter === 'resolved') return item.resolved;
+          if (filter === 'unresolved') return !item.resolved;
+          return true;
+        }).map((item) => (
           <Product
             key={item.id}
             item={item}
-            onToggleResolved={() => handleToggleItemResolved(item.id)}
-            onRemove={() => handleRemoveItem(item.id)}
+            onToggleResolved={() => {
+              const updatedList = {
+                ...list,
+                items: list.items.map((i) => (i.id === item.id ? { ...i, resolved: !i.resolved } : i)),
+              };
+              onUpdateShoppingList(updatedList);
+            }}
+            onRemove={() => {
+              const updatedList = { ...list, items: list.items.filter((i) => i.id !== item.id) };
+              onUpdateShoppingList(updatedList);
+            }}
           />
         ))}
       </ul>
