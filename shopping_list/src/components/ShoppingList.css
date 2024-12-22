@@ -99,3 +99,20 @@ ul {
 .add-item-button:hover {
     background-color: #45a049; 
 }
+
+.invite-user-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .invite-user-button:hover {
+    background-color: #0056b3;
+  }

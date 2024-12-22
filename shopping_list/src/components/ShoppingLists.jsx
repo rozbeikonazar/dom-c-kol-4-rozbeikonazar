@@ -8,7 +8,9 @@ const ShoppingLists = ({
   onAddList,
   onDeleteList,
   onUpdateShoppingList,
-  users
+  users,
+  translations, // Receive translations prop here
+  onChangeLanguage,
 }) => {
   const [newListName, setNewListName] = useState('');
   const [filter, setFilter] = useState('all');
@@ -43,23 +45,23 @@ const ShoppingLists = ({
 
   return (
     <div className="shopping-lists">
-      <h1>Your Shopping Lists</h1>
+      <h1>{translations.yourShoppingLists}</h1>
 
       <div className="add-list">
         <input
           type="text"
-          placeholder="New List Name"
+          placeholder={translations.newListName}
           value={newListName}
           onChange={(e) => setNewListName(e.target.value)}
         />
-        <button onClick={handleAddList}>Add List</button>
+        <button onClick={handleAddList}>{translations.addList}</button>
       </div>
 
       <div className="filter-container">
         <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-          <option value="all">All</option>
-          <option value="active">Active</option>
-          <option value="archived">Archived</option>
+          <option value="all">{translations.all}</option>
+          <option value="active">{translations.active}</option>
+          <option value="archived">{translations.archived}</option>
         </select>
       </div>
 
@@ -75,19 +77,19 @@ const ShoppingLists = ({
             >
               <Link to={`/list/${list.id}`}>
                 <h3>{list.name}</h3>
-                <p>Total Items: {list.items.length}</p>
-                <p>Resolved: {resolvedCount}</p>
-                <p>Unresolved: {unresolvedCount}</p>
+                <p>{translations.totalItems}: {list.items.length}</p>
+                <p>{translations.resolved}: {resolvedCount}</p>
+                <p>{translations.unresolved}: {unresolvedCount}</p>
               </Link>
               <p className={list.archived ? 'archived-text' : 'active-text'}>
-                {list.archived ? 'Archived' : 'Active'}
+                {list.archived ? translations.archivedStatus : translations.activeStatus}
               </p>
 
               <button
                 className={`archive-button ${list.archived ? 'archived' : 'active'}`}
                 onClick={() => handleArchiveToggle(list)}
               >
-                {list.archived ? 'Unarchive' : 'Archive'}
+                {list.archived ? translations.unarchive : translations.archive}
               </button>
 
               {list.ownerId === userId && (
@@ -98,7 +100,7 @@ const ShoppingLists = ({
                     setIsConfirmModalOpen(true);
                   }}
                 >
-                  Delete
+                  {translations.delete}
                 </button>
               )}
             </div>
@@ -109,10 +111,10 @@ const ShoppingLists = ({
       {isConfirmModalOpen && (
         <div className="confirm-modal">
           <div className="confirm-modal-content">
-            <p>Are you sure you want to delete "{listToDelete?.name}"?</p>
+            <p>{translations.confirmDelete} "{listToDelete?.name}"?</p>
             <div className="modal-buttons">
-              <button onClick={() => setIsConfirmModalOpen(false)}>Cancel</button>
-              <button onClick={handleDelete}>Delete</button>
+              <button onClick={() => setIsConfirmModalOpen(false)}>{translations.cancel}</button>
+              <button onClick={handleDelete}>{translations.delete}</button>
             </div>
           </div>
         </div>

@@ -4,12 +4,12 @@ import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import Product from './Product';
 import AddItemModal from './AddItemModal';
+import InviteUserModal from './InviteUserModal';
 import './ShoppingList.css';
 
-// Register Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-function ShoppingList({ shoppingLists, userId, onUpdateShoppingList, users }) {
+function ShoppingList({ shoppingLists, userId, onUpdateShoppingList, users, translations }) {
   const { id } = useParams();
   const listId = parseInt(id, 10);
   const list = shoppingLists.find((l) => l.id === listId);
@@ -18,19 +18,20 @@ function ShoppingList({ shoppingLists, userId, onUpdateShoppingList, users }) {
   const [isEditing, setIsEditing] = useState(false);
   const [newListName, setNewListName] = useState(list.name);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false); 
 
   if (!list) {
-    return <div>Shopping List not found</div>;
+    return <div>{translations.listNotFound}</div>;
   }
 
   const resolvedCount = list.items.filter((item) => item.resolved).length;
   const unresolvedCount = list.items.length - resolvedCount;
 
   const pieData = {
-    labels: ['Resolved', 'Unresolved'],
+    labels: [translations.resolved, translations.unresolved],
     datasets: [
       {
-        label: 'Item Status',
+        label: translations.itemStatus,
         data: [resolvedCount, unresolvedCount],
         backgroundColor: ['#4caf50', '#f44336'],
         hoverBackgroundColor: ['#45a049', '#e53935'],
@@ -64,21 +65,24 @@ function ShoppingList({ shoppingLists, userId, onUpdateShoppingList, users }) {
         )}
         {list.ownerId === userId && (
           <button className="edit-save-button" onClick={handleEditListName}>
-            {isEditing ? 'Save' : 'Edit'}
+            {isEditing ? translations.save : translations.edit}
           </button>
         )}
       </div>
 
       <div className="chart-container" style={{ width: '300px', height: '300px', margin: '0 auto' }}>
-        <h3>Item Status</h3>
+        <h3>{translations.itemStatus}</h3>
         <Pie data={pieData} options={{ maintainAspectRatio: false }} />
       </div>
 
       <div className="filter-add-container">
-        <button className="filter-button" onClick={() => setFilter('all')}>Show All</button>
-        <button className="filter-button" onClick={() => setFilter('unresolved')}>Show Unresolved</button>
-        <button className="filter-button" onClick={() => setFilter('resolved')}>Show Resolved</button>
+        <button className="filter-button" onClick={() => setFilter('all')}>{translations.showAll}</button>
+        <button className="filter-button" onClick={() => setFilter('unresolved')}>{translations.showUnresolved}</button>
+        <button className="filter-button" onClick={() => setFilter('resolved')}>{translations.showResolved}</button>
         <button className="add-item-button" onClick={() => setIsModalOpen(true)}>+</button>
+        <button className="invite-user-button" onClick={() => setIsInviteModalOpen(true)}>
+          {translations.inviteUser}
+        </button>
       </div>
 
       {isModalOpen && (
@@ -90,6 +94,17 @@ function ShoppingList({ shoppingLists, userId, onUpdateShoppingList, users }) {
             setIsModalOpen(false);
           }}
           onClose={() => setIsModalOpen(false)}
+        />
+      )}
+
+      {isInviteModalOpen && (
+        <InviteUserModal
+          onInviteUser={(id) => {
+            console.log(`User with ID ${id} invited!`);
+          }}
+          onClose={() => setIsInviteModalOpen(false)}
+          users={users}
+          invitedUsers={[]} 
         />
       )}
 
