@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -12,13 +12,41 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 function ShoppingList({ shoppingLists, userId, onUpdateShoppingList, users, translations }) {
   const { id } = useParams();
   const listId = parseInt(id, 10);
-  const list = shoppingLists.find((l) => l.id === listId);
 
+  const [list, setList] = useState(null); // Initially set to null to handle loading state.
   const [filter, setFilter] = useState('all');
   const [isEditing, setIsEditing] = useState(false);
-  const [newListName, setNewListName] = useState(list.name);
+  const [newListName, setNewListName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false); 
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+
+  const useMockData = process.env.REACT_APP_USE_MOCK === 'false'; 
+
+  // Function to fetch list from server
+  const fetchListFromServer = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/shoppingLists/${listId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch shopping list');
+      }
+
+      const data = await response.json();
+      setList(data); // Set the fetched data as the list
+    } catch (error) {
+      console.error('Error fetching shopping list:', error);
+    }
+  };
+
+  // Use mock data or fetch from server based on environment variable
+  useEffect(() => {
+    if (useMockData) {
+      // Find the mock list from the shoppingLists prop if using mock data
+      const mockList = shoppingLists.find((l) => l.id === listId);
+      setList(mockList || null); // Set list to null if not found
+    } else {
+      fetchListFromServer(); // Fetch data from the server
+    }
+  }, [listId, shoppingLists, useMockData]);
 
   if (!list) {
     return <div>{translations.listNotFound}</div>;

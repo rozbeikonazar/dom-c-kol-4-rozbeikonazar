@@ -9,7 +9,7 @@ const ShoppingLists = ({
   onDeleteList,
   onUpdateShoppingList,
   users,
-  translations, // Receive translations prop here
+  translations, 
   onChangeLanguage,
 }) => {
   const [newListName, setNewListName] = useState('');

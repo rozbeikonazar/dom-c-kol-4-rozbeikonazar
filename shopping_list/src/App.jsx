@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ShoppingLists from './components/ShoppingLists'; 
 import ShoppingList from './components/ShoppingList'; 
 import './App.css';
-import LanguageSwitcher from './components/LanguageSwitcher'; // Import the LanguageSwitcher
+import LanguageSwitcher from './components/LanguageSwitcher'; 
 
 function App() {
   const userId = 2; 
@@ -94,11 +94,31 @@ function App() {
     }
   };
 
-  const [language, setLanguage] = useState('en'); // Default language is English
-  const [isDarkMode, setIsDarkMode] = useState(false); // Default to light mode
+  const [language, setLanguage] = useState('en'); 
+  const [isDarkMode, setIsDarkMode] = useState(false); 
+  const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
-    // Apply dark or light mode based on isDarkMode state
+    const fetchShoppingLists = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/shoppingLists');
+        if (!response.ok) {
+          throw new Error('Failed to fetch shopping lists');
+        }
+
+        const data = await response.json();
+        setShoppingLists(data); 
+      } catch (error) {
+        console.error('Error fetching shopping lists:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchShoppingLists();
+  }, []); 
+
+  useEffect(() => {
     if (isDarkMode) {
       document.body.classList.add('dark-mode');
     } else {
@@ -114,7 +134,7 @@ function App() {
     setIsDarkMode(!isDarkMode);
   };
 
-  const addList = (listName) => {
+  const addList = async (listName) => {
     const newList = {
       id: shoppingLists.length + 1,
       name: listName,
@@ -123,15 +143,62 @@ function App() {
       items: [],
       archived: false,
     };
-    setShoppingLists([...shoppingLists, newList]);
+
+    try {
+      const response = await fetch('http://localhost:8080/shoppingLists', { 
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newList),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add list');
+      }
+
+      const addedList = await response.json();
+      setShoppingLists([...shoppingLists, addedList]);
+    } catch (error) {
+      console.error('Error adding list:', error);
+    }
   };
 
-  const deleteList = (listId) => {
-    setShoppingLists(shoppingLists.filter(list => list.id !== listId || list.ownerId !== userId));
+  const deleteList = async (listId) => {
+    try {
+      const response = await fetch(`http://localhost:8080/shoppingLists/${listId}`, { 
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete list');
+      }
+
+      setShoppingLists(shoppingLists.filter(list => list.id !== listId || list.ownerId !== userId));
+    } catch (error) {
+      console.error('Error deleting list:', error);
+    }
   };
 
-  const updateShoppingList = (updatedList) => {
-    setShoppingLists(shoppingLists.map(list => (list.id === updatedList.id ? updatedList : list)));
+  const updateShoppingList = async (updatedList) => {
+    try {
+      const response = await fetch(`http://localhost:8080/shoppingLists/${updatedList.id}`, { 
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedList),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update list');
+      }
+
+      const updatedData = await response.json();
+      setShoppingLists(shoppingLists.map(list => (list.id === updatedData.id ? updatedData : list)));
+    } catch (error) {
+      console.error('Error updating list:', error);
+    }
   };
 
   return (
@@ -142,35 +209,39 @@ function App() {
           {isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         </button>
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ShoppingLists
-                userId={userId}
-                shoppingLists={shoppingLists}
-                onAddList={addList}
-                onDeleteList={deleteList}
-                onUpdateShoppingList={updateShoppingList}
-                users={users}
-                translations={translations[language]} // Pass translations based on the current language
-                onChangeLanguage={changeLanguage} // Pass language change function
-              />
-            }
-          />
-          <Route
-            path="/list/:id"
-            element={
-              <ShoppingList
-                userId={userId}
-                shoppingLists={shoppingLists}
-                onUpdateShoppingList={updateShoppingList}
-                users={users}
-                translations={translations[language]} // Pass translations based on the current language
-              />
-            }
-          />
-        </Routes>
+        {isLoading ? (
+          <p>Loading shopping lists...</p> 
+        ) : (
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ShoppingLists
+                  userId={userId}
+                  shoppingLists={shoppingLists}
+                  onAddList={addList}
+                  onDeleteList={deleteList}
+                  onUpdateShoppingList={updateShoppingList}
+                  users={users}
+                  translations={translations[language]}
+                  onChangeLanguage={changeLanguage} 
+                />
+              }
+            />
+            <Route
+              path="/list/:id"
+              element={
+                <ShoppingList
+                  userId={userId}
+                  shoppingLists={shoppingLists}
+                  onUpdateShoppingList={updateShoppingList}
+                  users={users}
+                  translations={translations[language]} 
+                />
+              }
+            />
+          </Routes>
+        )}
       </div>
     </Router>
   );

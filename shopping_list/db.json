@@ -1,0 +1,55 @@
+{
+  "shoppingLists": [
+    {
+      "id": "1",
+      "name": "Grocery List",
+      "ownerId": 1,
+      "archived": false,
+      "items": [
+        {
+          "id": 1,
+          "name": "Apples",
+          "resolved": true
+        },
+        {
+          "id": 2,
+          "name": "Bananas",
+          "resolved": true
+        },
+        {
+          "id": 3,
+          "name": "Carrots",
+          "resolved": true
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Christmas Shopping",
+      "ownerId": 2,
+      "archived": true,
+      "items": [
+        {
+          "id": 4,
+          "name": "Presents",
+          "resolved": true
+        },
+        {
+          "id": 5,
+          "name": "Gift Wrap",
+          "resolved": false
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "name": "John Doe"
+    },
+    {
+      "id": "2",
+      "name": "Jane Smith"
+    }
+  ]
+}
